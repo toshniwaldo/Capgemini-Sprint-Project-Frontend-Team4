@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Edit Customer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
+  <div id="toast" class="toast align-items-center text-white border-0">
+    <div class="d-flex">
+      <div class="toast-body" id="toastBody"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+<div class="container mt-5">
+
+  <div class="card shadow-sm p-4">
+
+    <h3 class="mb-4">Edit Customer</h3>
+
+    <form id="updateForm">
+
+      <input type="hidden" id="customerNumber" th:value="${customer.customerNumber}">
+
+      <!-- NAME -->
+      <div class="mb-3">
+        <label class="form-label">Customer Name</label>
+        <input type="text" id="customerName" class="form-control"
+               th:value="${customer.customerName}"
+               th:attr="data-original=${customer.customerName}">
+      </div>
+
+      <!-- CONTACT -->
+      <div class="row mb-3">
+
+        <div class="col">
+          <label class="form-label">First Name</label>
+          <input type="text" id="contactFirstName" class="form-control"
+                 th:value="${customer.contactFirstName}"
+                 th:attr="data-original=${customer.contactFirstName}">
+        </div>
+
+        <div class="col">
+          <label class="form-label">Last Name</label>
+          <input type="text" id="contactLastName" class="form-control"
+                 th:value="${customer.contactLastName}"
+                 th:attr="data-original=${customer.contactLastName}">
+        </div>
+
+      </div>
+
+      <!-- PHONE -->
+      <div class="mb-3">
+        <label class="form-label">Phone</label>
+        <input type="text" id="phone" class="form-control"
+               placeholder="+91 98765 43210"
+               th:value="${customer.phone}"
+               th:attr="data-original=${customer.phone}">
+      </div>
+
+      <!-- ADDRESS -->
+      <div class="row mb-3">
+        <div class="col">
+          <label class="form-label">Address Line 1</label>
+          <input type="text" id="addressLine1" class="form-control"
+                 th:value="${customer.addressLine1}"
+                 th:attr="data-original=${customer.addressLine1}">
+        </div>
+
+        <div class="col">
+          <label class="form-label">Address Line 2</label>
+          <input type="text" id="addressLine2" class="form-control"
+                 placeholder="Optional"
+                 th:value="${customer.addressLine2}"
+                 th:attr="data-original=${customer.addressLine2}">
+        </div>
+      </div>
+
+      <!-- LOCATION -->
+      <div class="row mb-3">
+        <div class="col">
+          <label class="form-label">City</label>
+          <input type="text" id="city" class="form-control"
+                 th:value="${customer.city}"
+                 th:attr="data-original=${customer.city}">
+        </div>
+
+        <div class="col">
+          <label class="form-label">Country</label>
+          <input type="text" id="country" class="form-control"
+                 th:value="${customer.country}"
+                 th:attr="data-original=${customer.country}">
+        </div>
+      </div>
+
+      <!-- CREDIT -->
+      <div class="mb-3">
+        <label class="form-label">Credit Limit</label>
+        <input type="number" id="creditLimit" class="form-control"
+               th:value="${customer.creditLimit}"
+               th:attr="data-original=${customer.creditLimit}">
+      </div>
+
+      <!-- BUTTONS -->
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-success" onclick="updateCustomer()">
+          Update
+        </button>
+
+        <button type="button" class="btn btn-secondary" onclick="history.back()">
+          Cancel
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<script th:src="@{/js/customer.js}"></script>
+
+<script th:inline="javascript">
+  const BASE_URL = /*[[${@environment.getProperty('backend.base-url')}]]*/ 'http://localhost:8080';
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
