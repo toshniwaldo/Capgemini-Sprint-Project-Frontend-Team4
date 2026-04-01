@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Customer Data</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-4">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Customer Details</h2>
+
+    <a th:href="@{/customers}" class="btn btn-secondary">
+      Back
+    </a>
+  </div>
+
+  <!-- TOGGLE -->
+  <div class="btn-group mb-3">
+
+    <a th:href="@{/customers/view/{id}(id=${customerId}, type='orders')}"
+       class="btn"
+       th:classappend="${type == 'orders'} ? 'btn-dark' : 'btn-outline-dark'">
+      Orders
+    </a>
+
+    <a th:href="@{/customers/view/{id}(id=${customerId}, type='payments')}"
+       class="btn"
+       th:classappend="${type == 'payments'} ? 'btn-dark' : 'btn-outline-dark'">
+      Payments
+    </a>
+
+  </div>
+
+  <!-- ===================== ORDERS SECTION ===================== -->
+
+  <div th:if="${type == 'orders'}">
+
+    <!-- INFO BAR -->
+    <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
+
+      <span class="badge bg-primary fs-6">
+        Total Orders: <span th:text="${#lists.size(orders)}"></span>
+      </span>
+
+      <span class="text-muted small">
+        Sorted by <strong>Order Date</strong>
+      </span>
+
+      <div class="btn-group btn-group-sm">
+
+        <a th:href="@{/customers/view/{id}(id=${customerId}, type='orders', sort='asc')}"
+           class="btn"
+           th:classappend="${sort == 'asc'} ? 'btn-primary' : 'btn-outline-primary'">
+          ↑ Oldest
+        </a>
+
+        <a th:href="@{/customers/view/{id}(id=${customerId}, type='orders', sort='desc')}"
+           class="btn"
+           th:classappend="${sort == 'desc'} ? 'btn-primary' : 'btn-outline-primary'">
+          ↓ Latest
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- ORDERS TABLE -->
+    <table class="table table-bordered table-hover shadow-sm bg-white">
+
+      <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Order Date</th>
+        <th>Required</th>
+        <th>Shipped</th>
+        <th>Status</th>
+        <th>Delivery Timeline</th>
+        <th>Comments</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <tr th:if="${#lists.isEmpty(orders)}">
+        <td colspan="7" class="text-center text-muted">No orders found</td>
+      </tr>
+
+      <tr th:each="o, stat : ${orders}">
+        <td th:text="${stat.index + 1}"></td>
+        <td th:text="${o.orderDate}"></td>
+        <td th:text="${o.requiredDate}"></td>
+        <td th:text="${o.shippedDate} ?: '-'"></td>
+
+        <td>
+          <span th:if="${o.status == 'Shipped'}" class="badge bg-success">Shipped</span>
+          <span th:if="${o.status == 'Cancelled'}" class="badge bg-danger">Cancelled</span>
+          <span th:if="${o.status == 'In Process' or o.status == 'Processing'}"
+                class="badge bg-warning text-dark">Processing</span>
+        </td>
+
+        <td>
+          <span th:if="${o.deliveryTimeline != null}"
+                th:classappend="${o.deliveryTimeline.contains('Overdue')} ? 'bg-danger' : 'bg-warning text-dark'"
+                class="badge"
+                th:text="${o.deliveryTimeline}">
+          </span>
+        </td>
+
+        <td th:text="${o.comments} ?: '-'"></td>
+      </tr>
+
+      </tbody>
+    </table>
+
+  </div>
+
+  <!-- ===================== PAYMENTS SECTION ===================== -->
+
+  <div th:if="${type == 'payments'}">
+
+    <!-- TOTAL PAYMENTS -->
+    <div class="mb-3">
+      <span class="badge bg-success fs-6">
+        Total Payments:
+        ₹ <span th:text="${#numbers.formatDecimal(#aggregates.sum(payments.![amount]), 1, 'COMMA', 2, 'POINT')}"></span>
+      </span>
+    </div>
+
+    <!-- PAYMENTS TABLE -->
+    <table class="table table-bordered table-hover shadow-sm bg-white">
+
+      <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Payment Date</th>
+        <th>Amount</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <tr th:if="${#lists.isEmpty(payments)}">
+        <td colspan="3" class="text-center text-muted">No payments found</td>
+      </tr>
+
+      <tr th:each="p, stat : ${payments}">
+        <td th:text="${stat.index + 1}"></td>
+        <td th:text="${p.paymentDate}"></td>
+        <td>
+          ₹ <span th:text="${#numbers.formatDecimal(p.amount, 1, 'COMMA', 2, 'POINT')}"></span>
+        </td>
+      </tr>
+
+      </tbody>
+    </table>
+
+  </div>
+
+  <!-- PAGINATION -->
+  <nav>
+    <ul class="pagination justify-content-center">
+
+      <!-- Previous -->
+      <li class="page-item"
+          th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'">
+
+        <a class="page-link"
+           th:href="@{/customers/view/{id}(
+              id=${customerId},
+              page=${currentPage != null ? currentPage - 1 : 0},
+              type=${type},
+              sort=${sort}
+           )}">
+          Previous
+        </a>
+      </li>
+
+      <!-- Page Numbers -->
+      <li class="page-item"
+          th:each="i : ${#numbers.sequence(0, (totalPages != null ? totalPages - 1 : 0))}"
+          th:classappend="${i == currentPage} ? 'active'">
+
+        <a class="page-link"
+           th:href="@{/customers/view/{id}(
+              id=${customerId},
+              page=${i},
+              type=${type},
+              sort=${sort}
+           )}"
+           th:text="${i + 1}">
+        </a>
+      </li>
+
+      <!-- Next -->
+      <li class="page-item"
+          th:classappend="${currentPage == null or currentPage >= totalPages - 1} ? 'disabled'">
+
+        <a class="page-link"
+           th:href="@{/customers/view/{id}(
+              id=${customerId},
+              page=${currentPage != null ? currentPage + 1 : 0},
+              type=${type},
+              sort=${sort}
+           )}">
+          Next
+        </a>
+      </li>
+
+    </ul>
+  </nav>
+
+</div>
+
+</body>
+</html>

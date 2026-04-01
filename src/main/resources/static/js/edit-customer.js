@@ -53,19 +53,19 @@ function updateCustomer() {
         let current = el.value.trim();
         let original = (el.dataset.original || "").trim();
 
-        // 🔥 Normalize phone
+        // Normalize phone
         if (options.normalize === "phone") {
             current = current.replace(/[^\d]/g, '');
             original = original.replace(/[^\d]/g, '');
         }
 
-        // 🔥 Convert number
+        //Convert number
         if (options.type === "number" && current !== "") {
             current = Number(current);
             original = Number(original);
         }
 
-        // 🔥 Dirty check
+        //Dirty check
         if (current !== original) {
 
             if (options.nullable && current === "") {
@@ -158,7 +158,7 @@ function updateCustomer() {
 
 // ===== HELPERS =====
 
-// 🔥 Toast
+//Toast
 function showToast(message, isError = false) {
     const toastEl = document.getElementById("toast");
     const body = document.getElementById("toastBody");
@@ -173,10 +173,10 @@ function showToast(message, isError = false) {
 }
 
 
-// 🔥 Dirty highlight
+//Dirty highlight
 function markDirty(fieldId) {
     const el = document.getElementById(fieldId);
-    if (!el) return; // 🔥 THIS FIX
+    if (!el) return;
 
     const original = (el.dataset.original || "").trim();
 
@@ -192,14 +192,14 @@ function markDirty(fieldId) {
 }
 
 
-// 🔥 Check if any field changed
+//Check if any field changed
 function hasChanges() {
     return [...document.querySelectorAll("[data-original]")]
         .some(el => el.value.trim() !== (el.dataset.original || "").trim());
 }
 
 
-// 🔥 Inline error
+//Inline error
 function handleError(fieldId, message, btn) {
     const el = document.getElementById(fieldId);
 
@@ -228,7 +228,7 @@ function clearError(el) {
 }
 
 
-// 🔥 Reset button
+//Reset button
 function reset(btn) {
     btn.disabled = false;
     btn.innerText = "Update";

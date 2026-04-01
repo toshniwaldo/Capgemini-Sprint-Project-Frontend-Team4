@@ -11,8 +11,15 @@
 <body class="bg-light">
 
 <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-    <h2 class="mb-4">Customer Management</h2>
+        <h2 class="mb-0">Customer Management</h2>
+
+        <a th:href="@{/customers/add}" class="btn btn-success">
+            + Add Customer
+        </a>
+
+    </div>
 
     <!-- SEARCH BAR -->
     <form th:action="@{/customers}" method="get" class="mb-3">
@@ -127,7 +134,11 @@
 
         if (params.has("success")) {
             toastEl.classList.add("bg-success");
-            toastBody.innerText = "Customer updated successfully";
+            if (params.get("success") === "created") {
+                toastBody.innerText = "Customer added successfully";
+            } else {
+                toastBody.innerText = "Customer updated successfully";
+        }
             new bootstrap.Toast(toastEl).show();
         }
 
@@ -137,7 +148,7 @@
             new bootstrap.Toast(toastEl).show();
         }
 
-        // 🔥 Clean URL (no query params after toast)
+        //Clean URL (no query params after toast)
         if (params.has("success") || params.has("error")) {
             window.history.replaceState({}, document.title, "/customers");
         }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products List</title>
+
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <script th:src="@{/js/products.js}" defer></script>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <div class="container mt-3">
+        <nav style="font-size:0.8rem; color:#6b6b66;">
+            <a th:href="@{/product-lines}" style="text-decoration:none; color:#6b6b66;">Home</a>
+            <span> / </span>
+            <span th:text="${page}">Page</span>
+        </nav>
+    </div>
+    <div class="page-header">
+        <h1>Products for <span id="lineHeaderTitle" style="color: var(--accent);">...</span></h1>
+        <p>Viewing all associated products.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Product Roster</div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>Vendor</th>
+                    <th>MSRP</th>
+                    <th>Buy Price</th>
+                    <th>Stock</th>
+                </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                <tr><td colspan="6" style="text-align:center; padding: 20px;">Loading products...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination" id="productsPagination">
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
