@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Lines</title>
+
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script th:src="@{/js/dashboard.js}" defer></script>
+</head>
+<body>
+
+<div class="app-wrapper">
+  <div class="page-header">
+    <h1>Product Lines</h1>
+    <p>Manage your product categories and descriptions.</p>
+  </div>
+
+  <div id="toastContainer"></div>
+
+  <div class="card">
+    <div class="card-header">
+      <form id="searchForm" class="search-area">
+
+        <div class="search-group">
+          <label>Search by Image</label>
+          <div class="search-input-wrap">
+            <label class="btn btn-ghost" style="padding: 0; cursor: pointer; height: 36px; display: flex; align-items: center; justify-content: center; width: 100%; margin: 0;">
+              🖼️ Upload Image
+              <input id="imageSearchInput" type="file" accept="image/*" style="display: none;" />
+            </label>
+          </div>
+        </div>
+
+        <div class="search-group">
+          <label for="nameSearch">Search by Name</label>
+          <div class="search-input-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="nameSearch" class="search-input" type="text" name="name" placeholder="Exact product line name..." />
+          </div>
+        </div>
+        <div class="search-group">
+          <label for="descSearch">Search by Description</label>
+          <div class="search-input-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="descSearch" class="search-input" type="text" name="desc" placeholder="Description text..." />
+          </div>
+        </div>
+
+        <div class="search-actions" style="display: flex; gap: 8px; flex-shrink: 0;">
+          <button type="submit" class="btn btn-primary">🔍 Search</button>
+          <button type="button" id="clearSearch" class="btn btn-ghost" style="display:none;">Clear</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Product Line</th>
+          <th>Text Description</th>
+          <th>Image</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination" id="paginationContainer">
+    </div>
+  </div>
+
+  <div class="forms-grid">
+    <div class="form-card">
+      <div class="form-card-header">
+        <h2>➕ Add New Product Line</h2>
+      </div>
+      <div class="form-body">
+        <form id="addForm">
+          <div class="form-field">
+            <label>Product Line Name *</label>
+            <input class="form-input" type="text" id="addProductLine" required placeholder="e.g. Classic Cars" />
+          </div>
+
+          <div class="form-field">
+            <label>Text Description</label>
+            <input class="form-input" type="text" id="addTextDescription" placeholder="Short description..." />
+          </div>
+
+          <div class="form-field">
+            <label>HTML Description</label>
+            <textarea id="addHtmlDesc" style="display:none"></textarea>
+            <div class="rich-editor">
+              <div class="editor-toolbar" data-target="addHtmlDesc">
+                <button type="button" class="toolbar-btn" data-cmd="bold"><b>B</b></button>
+                <button type="button" class="toolbar-btn" data-cmd="italic"><i>I</i></button>
+                <button type="button" class="toolbar-btn" data-cmd="underline"><u>U</u></button>
+                <div class="toolbar-sep"></div>
+                <button type="button" class="toolbar-btn" data-cmd="insertUnorderedList">• List</button>
+                <button type="button" class="toolbar-btn" data-cmd="insertOrderedList">1. List</button>
+              </div>
+              <div class="editor-area" contenteditable="true" data-textarea="addHtmlDesc" placeholder="Enter HTML description here..."></div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Product Image</label>
+            <label class="image-upload-area" for="addImageFile" id="addUploadLabel">
+              <div>📁</div>
+              <p style="font-size:.875rem;color:var(--text-secondary);margin-top:6px">Click to choose an image</p>
+              <p class="upload-formats">Accepted: JPG, PNG, GIF</p>
+              <input id="addImageFile" type="file" name="imageFile" accept="image/jpeg,image/png,image/gif" />
+            </label>
+            <div id="addPreview" class="upload-preview" style="display:none">
+              <img id="addPreviewImg" src="" alt="preview" />
+              <div class="upload-preview-info">
+                <p id="addPreviewName"></p>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="clearImage('addImageFile','addPreview','addUploadLabel')">✕ Remove</button>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">✔ Add Product Line</button>
+            <button type="reset" class="btn btn-ghost" onclick="clearImage('addImageFile','addPreview','addUploadLabel')">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="form-card" id="updateCard" style="opacity: 0.5; pointer-events: none;">
+      <div class="form-card-header update-header">
+        <h2>✏️ Update Product Line</h2>
+      </div>
+
+      <div class="form-body">
+        <form id="updateForm">
+          <input type="hidden" id="updateId" />
+
+          <div class="form-field">
+            <label>Product Line Name *</label>
+            <input class="form-input" type="text" id="updateProductLine" readonly style="background: var(--surface2)" />
+          </div>
+
+          <div class="form-field">
+            <label>Text Description</label>
+            <input class="form-input" type="text" id="updateTextDescription" />
+          </div>
+
+          <div class="form-field">
+            <label>HTML Description</label>
+            <textarea id="updateHtmlDesc" style="display:none"></textarea>
+            <div class="rich-editor">
+              <div class="editor-toolbar" data-target="updateHtmlDesc">
+                <button type="button" class="toolbar-btn" data-cmd="bold"><b>B</b></button>
+                <button type="button" class="toolbar-btn" data-cmd="italic"><i>I</i></button>
+                <button type="button" class="toolbar-btn" data-cmd="underline"><u>U</u></button>
+                <div class="toolbar-sep"></div>
+                <button type="button" class="toolbar-btn" data-cmd="insertUnorderedList">• List</button>
+                <button type="button" class="toolbar-btn" data-cmd="insertOrderedList">1. List</button>
+              </div>
+              <div class="editor-area" contenteditable="true" data-textarea="updateHtmlDesc" placeholder="Enter HTML description here..."></div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Change Image (Optional)</label>
+            <div id="currentImagePreview" class="upload-preview" style="margin-bottom:10px; display:none;">
+              <img id="currentUpdateImg" src="" alt="current image" />
+              <div class="upload-preview-info">
+                <p style="font-size:.8rem;color:var(--text-secondary)">Current Image in Database</p>
+              </div>
+            </div>
+
+            <label class="image-upload-area" for="updateImageFile" id="updateUploadLabel">
+              <div>🔄</div>
+              <p style="font-size:.82rem;color:var(--text-secondary);margin-top:4px">Click to replace image</p>
+              <p class="upload-formats">Accepted: JPG, PNG, GIF</p>
+              <input id="updateImageFile" type="file" name="imageFile" accept="image/jpeg,image/png,image/gif" />
+            </label>
+            <div id="updatePreview" class="upload-preview" style="display:none">
+              <img id="updatePreviewImg" src="" alt="preview" />
+              <div class="upload-preview-info">
+                <p id="updatePreviewName"></p>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="clearImage('updateImageFile','updatePreview','updateUploadLabel')">✕ Remove</button>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-success">✔ Update Product Line</button>
+            <button type="button" class="btn btn-ghost" onclick="cancelEdit()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="analytics-section card" style="margin-top: 28px;">
+    <div class="analytics-header">
+      <div>
+        <h2>Data Analytics</h2>
+        <p>Breakdown of products sold per product line</p>
+      </div>
+    </div>
+    <div class="analytics-body">
+      <div class="chart-center">
+        <canvas id="analyticsChart" width="320" height="320"></canvas>
+      </div>
+      <div class="analytics-legend" id="analyticsLegend">
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
