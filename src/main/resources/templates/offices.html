@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Office Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold mb-1">Office Management</h1>
+            <p class="text-muted mb-0">Browse and search office records</p>
+        </div>
+
+        <a class="btn btn-success" th:href="@{/offices/add}">
+            Add Office
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body">
+            <form th:action="@{/offices}" method="get" class="row g-3 align-items-end">
+                <input type="hidden" name="size" th:value="${size}">
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Search Field</label>
+                    <select name="field" class="form-select">
+                        <option value="">Select Field</option>
+                        <option value="city" th:selected="${field == 'city'}">City</option>
+                        <option value="state" th:selected="${field == 'state'}">State</option>
+                        <option value="country" th:selected="${field == 'country'}">Country</option>
+                        <option value="territory" th:selected="${field == 'territory'}">Territory</option>
+                    </select>
+                </div>
+
+                <div class="col-md-5">
+                    <label class="form-label fw-semibold">Search Value</label>
+                    <input type="text" name="value" class="form-control"
+                           th:value="${value}"
+                           placeholder="Type partial value">
+                </div>
+
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                    <a th:href="@{/offices(size=${size})}" class="btn btn-outline-secondary w-100">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>City</th>
+                        <th>Country</th>
+                        <th>Phone</th>
+                        <th>Territory</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(offices)}">
+                        <td colspan="5" class="text-center text-muted py-4">No office records found</td>
+                    </tr>
+
+                    <tr th:each="office : ${offices}">
+                        <td th:text="${office.city}"></td>
+                        <td th:text="${office.country}"></td>
+                        <td th:text="${office.phone}"></td>
+                        <td th:text="${office.territory}"></td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a class="btn btn-primary btn-sm"
+                                   th:href="@{/offices/view/{officeCode}(officeCode=${office.officeCode})}">
+                                    View
+                                </a>
+                                <a class="btn btn-outline-secondary btn-sm"
+                                   th:href="@{/offices/update/{officeCode}(officeCode=${office.officeCode})}">
+                                    Update
+                                </a>
+                                <a class="btn btn-success btn-sm"
+                                   th:href="@{/offices/{officeCode}/employees(officeCode=${office.officeCode})}">
+                                    View Employees
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-center align-items-center gap-3 mt-4">
+                <a class="btn btn-dark"
+                   th:if="${officePage.hasPrevious}"
+                   th:href="@{/offices(page=${officePage.currentPage - 1}, size=${size}, field=${field}, value=${value})}">
+                    Previous
+                </a>
+
+                <span class="fw-semibold">
+                    Page <span th:text="${officePage.currentPage + 1}"></span>
+                    of
+                    <span th:text="${officePage.totalPages}"></span>
+                </span>
+
+                <a class="btn btn-dark"
+                   th:if="${officePage.hasNext}"
+                   th:href="@{/offices(page=${officePage.currentPage + 1}, size=${size}, field=${field}, value=${value})}">
+                    Next
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
