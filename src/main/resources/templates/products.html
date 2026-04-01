@@ -1,0 +1,496 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Products</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #f7f7f5;
+            --surface: #ffffff;
+            --border: #e8e8e4;
+            --text-primary: #1a1a18;
+            --text-secondary: #6b6b66;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --radius: 10px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Top nav bar */
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-brand {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            font-family: 'DM Mono', monospace;
+        }
+
+        .topbar-nav a {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-weight: 500;
+            transition: color 0.15s;
+        }
+
+        .topbar-nav a:hover {
+            color: var(--text-primary);
+        }
+
+        .topbar-nav a.active {
+            color: var(--accent);
+        }
+
+        /* Page layout */
+        .page-wrapper {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .page-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-top: 0.35rem;
+        }
+
+        /* Search panel */
+        .search-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-panel input {
+            flex: 1;
+            min-width: 140px;
+            height: 36px;
+            font-size: 0.82rem;
+            font-family: 'DM Sans', sans-serif;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0 0.75rem;
+            color: var(--text-primary);
+            background: var(--bg);
+            transition: border-color 0.15s, box-shadow 0.15s;
+            outline: none;
+        }
+
+        .search-panel input::placeholder {
+            color: #aaa;
+        }
+
+        .search-panel input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+        }
+
+        .btn-search {
+            height: 36px;
+            padding: 0 1.1rem;
+            font-size: 0.82rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            background: var(--text-primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-search:hover {
+            background: #333;
+        }
+
+        /* Add product button */
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            height: 36px;
+            padding: 0 1.1rem;
+            font-size: 0.82rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .btn-add:hover {
+            background: #1d4ed8;
+            color: #fff;
+        }
+
+        .btn-add svg {
+            flex-shrink: 0;
+        }
+
+        /* Table */
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .data-table thead tr {
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .title-style {
+            text-decoration: none !important;
+            color: inherit;
+        }
+
+        .data-table th {
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+        }
+
+        .data-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .data-table td {
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        .data-table td.mono {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+
+        /* Action buttons */
+        .btn-table {
+            display: inline-flex;
+            align-items: center;
+            height: 28px;
+            padding: 0 0.7rem;
+            font-size: 0.75rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            background: var(--surface);
+            color: var(--text-primary);
+        }
+
+        .btn-table:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .btn-table.btn-orders {
+            border-color: #e9d5ff;
+            color: #7c3aed;
+            background: #faf5ff;
+        }
+
+        .btn-table.btn-orders:hover {
+            border-color: #7c3aed;
+            background: #ede9fe;
+        }
+
+        /* Stock badge */
+        .badge-stock {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .badge-stock.ok {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-stock.low {
+            background: #fef9c3;
+            color: #a16207;
+        }
+
+        .badge-stock.empty {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* Empty state */
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Pagination */
+        .pagination-bar {
+            display: flex;
+            gap: 0.3rem;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            background: var(--bg);
+        }
+
+        .page-btn {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+            font-family: 'DM Mono', monospace;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background: var(--surface);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top bar -->
+    <div class="topbar">
+        <a th:href="@{/}" class="title-style"><span class="topbar-brand">Classic Business Model</span></a>
+    </div>
+
+    <!-- breadcrumb -->
+     <div class="container mt-3">
+        <nav style="font-size:0.8rem; color:#6b6b66;">
+            <a th:href="@{/products}" style="text-decoration:none; color:#6b6b66;">Products</a>
+            <span> / </span>    
+            <span th:text="${page}">Page</span>
+        </nav>
+    </div>
+
+    <div class="page-wrapper">
+
+        <!-- Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Products</h1>
+                <p class="page-subtitle">Manage your product catalog</p>
+            </div>
+            <a th:href="@{/products/add}" class="btn-add">
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                    <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                Add Product
+            </a>
+        </div>
+
+        <!-- Search -->
+        <form th:action="@{/products}" method="get" class="search-panel">
+
+            <input type="text" name="name" placeholder="Product name…" 
+                th:value="${param.name}" />
+
+            <input type="text" name="line" placeholder="Product line…" 
+                th:value="${param.line}" />
+
+            <input type="text" name="vendor" placeholder="Vendor…" 
+                th:value="${param.vendor}" />
+
+            <input type="hidden" name="page" value="0"/>
+
+            <button type="submit"
+                    class="btn-search"
+                    th:text="${param.name != null or param.line != null or param.vendor != null} ? 'Clear' : 'Search'">
+            </button>
+
+        </form>
+
+        <!-- Table -->
+        <div class="table-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Line</th>
+                        <th>Vendor</th>
+                        <th>In Stock</th>
+                        <th>Buy Price</th>
+                        <th>MSRP</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                
+                
+                <tbody>
+                    <tr th:each="p : ${products}">
+                        <td><strong th:text="${p.productName}"></strong></td>
+                        <td th:text="${p.productLine}"></td>
+                        <td class="mono" th:text="${p.productVendor}"></td>
+
+                        <td>
+                            <span class="badge-stock"
+                                th:classappend="${p.quantityInStock == 0} ? 'empty' :
+                                                (${p.quantityInStock} < 50 ? 'low' : 'ok')"
+                                th:text="${p.quantityInStock}">
+                            </span>
+                        </td>
+
+                        <td class="mono" th:text="'$' + ${p.buyPrice}"></td>
+                        <td class="mono" th:text="'$' + ${p.MSRP}"></td>
+
+                        <td>
+                            <a class="btn-table"
+                                th:href="@{'/products/update/' + ${p.productId}}">
+                                    Edit
+                                </a>
+
+                            <a class="btn-table btn-orders"
+                                th:href="@{'/orderdetails?productCode=' + ${p.productId}}">
+                                    Orders
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+            </table>
+
+
+            <div class="pagination-bar" th:if="${pageData.totalPages > 1}">
+                <!-- PREVIOUS -->
+                <a th:if="${pageData.number > 0}"
+                th:href="@{/products(page=${pageData.number - 1}, name=${param.name}, line=${param.line}, vendor=${param.vendor})}"
+                class="page-btn">
+                    ←
+                </a>
+
+                <!-- CURRENT PAGE -->
+                <span class="page-btn active"
+                    th:text="${pageData.number + 1}">
+                </span>
+
+                <!-- NEXT -->
+                <a th:if="${pageData.number < pageData.totalPages - 1}"
+                th:href="@{/products(page=${pageData.number + 1}, name=${param.name}, line=${param.line}, vendor=${param.vendor})}"
+                class="page-btn">
+                    →
+                </a>
+
+            </div>
+            <div id="pagination" class="pagination-bar" style="display:none;"></div>
+        </div>
+
+    </div>
+
+
+    <script>
+        document.querySelector(".search-panel").addEventListener("submit", function(e) {
+
+            const hasFilters =
+                new URLSearchParams(window.location.search).toString().length > 0;
+
+            if (hasFilters) {
+                // CLEAR MODE
+                e.preventDefault();
+                window.location.href = "/products";
+            }
+        });
+    </script>
+    </body>
+</html>

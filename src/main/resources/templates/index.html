@@ -1,0 +1,920 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Classic Business Model — Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ── Tokens ─────────────────────────────────────── */
+        :root {
+            --bg: #f6f5f2;
+            --surface: #ffffff;
+            --surface-2: #f0efe9;
+            --border: #e4e3dc;
+            --text-primary: #181815;
+            --text-secondary: #6a6a62;
+            --text-muted: #a8a89e;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --accent-hover: #1d4ed8;
+            --radius: 12px;
+            --radius-lg: 18px;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-sans: 'DM Sans', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Topbar ─────────────────────────────────────── */
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2.5rem;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-brand {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-family: 'DM Mono', monospace;
+            text-decoration: none !important;
+            color: inherit;
+        }
+
+        .topbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .topbar-nav a {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .topbar-nav a:hover {
+            background: var(--surface-2);
+            color: var(--text-primary);
+        }
+
+        /* ── Hero ───────────────────────────────────────── */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2.5rem 4rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .team-card {
+            text-decoration: none;
+            color: inherit;
+            display: block; /* important for full card click */
+        }
+
+        .team-card * {
+            text-decoration: none !important;
+            color: inherit;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hero-eyebrow::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 1px;
+            background: var(--accent);
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.4rem, 4vw, 3.4rem);
+            font-weight: 400;
+            line-height: 1.15;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .hero-description {
+            font-size: 0.95rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            max-width: 420px;
+            margin-bottom: 2.25rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            height: 42px;
+            padding: 0 1.4rem;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: var(--text-primary);
+            color: #fff;
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: background 0.15s, transform 0.15s;
+        }
+
+        .title-style {
+            text-decoration: none !important;
+            color: inherit;
+        }
+
+        .btn-hero-primary:hover {
+            background: #2a2a25;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-hero-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            height: 42px;
+            padding: 0 1.4rem;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+
+        .btn-hero-secondary:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        /* Hero stats */
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat-item {}
+
+        .stat-number {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* Hero visual */
+        .hero-visual {
+            position: relative;
+        }
+
+        .hero-card-stack {
+            position: relative;
+            height: 340px;
+        }
+
+        .hero-card {
+            position: absolute;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.4rem 1.5rem;
+            width: 100%;
+        }
+
+        .hero-card:nth-child(1) {
+            top: 0;
+            left: 0;
+            transform: rotate(-2.5deg);
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        .hero-card:nth-child(2) {
+            top: 18px;
+            left: 0;
+            transform: rotate(-1deg);
+            z-index: 2;
+            opacity: 0.75;
+        }
+
+        .hero-card:nth-child(3) {
+            top: 36px;
+            left: 0;
+            z-index: 3;
+        }
+
+        .hcard-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .hcard-product-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.82rem;
+        }
+
+        .hcard-product-row:last-child {
+            border-bottom: none;
+        }
+
+        .hcard-product-name {
+            font-weight: 500;
+        }
+
+        .hcard-product-meta {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .hcard-badge {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .hcard-badge.ok {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .hcard-badge.low {
+            background: #fef9c3;
+            color: #a16207;
+        }
+
+        /* ── Features strip ─────────────────────────────── */
+        .features-strip {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .features-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2.5rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .feature-item {
+            padding: 2rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            border-right: 1px solid var(--border);
+            padding-right: 2rem;
+            padding-left: 2rem;
+        }
+
+        .feature-item:first-child {
+            padding-left: 0;
+        }
+
+        .feature-item:last-child {
+            border-right: none;
+        }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon svg {
+            opacity: 0.65;
+        }
+
+        .feature-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ── Section headings ───────────────────────────── */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4.5rem 2.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+        }
+
+        /* ── Module cards ───────────────────────────────── */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .module-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.6rem;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 60%, rgba(37, 99, 235, 0.03));
+            pointer-events: none;
+        }
+
+        .module-card:hover {
+            border-color: #c7d7fd;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .module-icon-wrap {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+        }
+
+        .module-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .module-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .module-link {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: auto;
+        }
+
+        .module-link svg {
+            transition: transform 0.15s;
+        }
+
+        .module-card:hover .module-link svg {
+            transform: translateX(3px);
+        }
+
+        /* ── Divider ────────────────────────────────────── */
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 0 2.5rem;
+        }
+
+        /* ── Team section ───────────────────────────────── */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+
+        .team-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .team-card:hover {
+            border-color: #d4d4cc;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Photo area */
+        .team-photo-wrap {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: var(--surface-2);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Replace this <img> tag's src with the real photo path */
+        .team-photo-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Placeholder shown when no photo */
+        .team-photo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: linear-gradient(145deg, var(--surface-2) 0%, #e8e7e0 100%);
+        }
+
+        .team-avatar-initials {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--border);
+            border: 2px solid #d8d7d0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .team-placeholder-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* Photo slot instruction comment — visible in source only */
+
+        .team-info {
+            padding: 1.25rem 1.4rem 1.4rem;
+        }
+
+        .team-number {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            margin-bottom: 0.4rem;
+        }
+
+        .team-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.2rem;
+        }
+
+        .team-role {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Feature pills */
+        .team-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .feature-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0.2rem 0.6rem;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+
+        .team-card:hover .feature-pill {
+            background: var(--accent-light);
+            border-color: #bfdbfe;
+            color: var(--accent);
+        }
+
+        .feature-pill-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.5;
+        }
+
+        /* ── Footer ─────────────────────────────────────── */
+        .footer {
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            padding: 2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .footer-brand {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .footer-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Fade-in animation ──────────────────────────── */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-up {
+            animation: fadeUp 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        .delay-5 {
+            animation-delay: 0.5s;
+        }
+
+        .delay-6 {
+            animation-delay: 0.55s;
+        }
+
+        .delay-7 {
+            animation-delay: 0.6s;
+        }
+
+        .delay-8 {
+            animation-delay: 0.65s;
+        }
+
+        /* ── Responsive ─────────────────────────────────── */
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+                padding-top: 3rem;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .features-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-item {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding-left: 0;
+            }
+
+            .feature-item:last-child {
+                border-bottom: none;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 580px) {
+
+            .modules-grid,
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                padding: 0 1.25rem;
+            }
+
+            .hero,
+            .section {
+                padding-left: 1.25rem;
+                padding-right: 1.25rem;
+            }
+
+            .section-divider {
+                margin: 0 1.25rem;
+            }
+
+            a {
+                text-decoration: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── Topbar ── -->
+    <div class="topbar">
+        <a href="/" class="topbar-brand">Classic Business Model</a>
+    </div>
+
+    <!-- ── Team ── -->
+    <section class="section">
+        <div class="section-header fade-up">
+            <div>
+                <div class="section-eyebrow">The people behind it</div>
+                <h2 class="section-title">Meet the team</h2>
+            </div>
+        </div>
+
+        <div class="team-grid">
+
+            <!-- ── Member 1 ── -->
+            <a th:href="@{/customers}" class="team-card fade-up delay-1">
+                <div class="team-photo-wrap">
+                    <div class="team-photo-placeholder">
+                        <div class="team-avatar-initials">A</div>
+                        <span class="team-placeholder-label">Photo coming soon</span>
+                    </div>
+                </div>
+                <div class="team-info">
+                    <div class="team-number">01</div>
+                    <div class="team-name">Tanishq Savarkar</div>
+                    <div class="team-features">
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Customer</span>
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Payments</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- ── Member 2 ── -->
+            <a th:href="@{/office}" class="team-card fade-up delay-2">
+                <div class="team-photo-wrap">
+                    <div class="team-photo-placeholder">
+                        <div class="team-avatar-initials">B</div>
+                        <span class="team-placeholder-label">Photo coming soon</span>
+                    </div>
+                </div>
+                <div class="team-info">
+                    <div class="team-number">02</div>
+                    <div class="team-name">Jatin Ukey</div>
+                    <div class="team-features">
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Office</span>
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Employees</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- ── Member 3 ── -->
+            <a th:href="@{/products}" class="team-card fade-up delay-3">
+                <div class="team-photo-wrap">
+                    <div class="team-photo-placeholder">
+                        <img th:src="@{/sanchit.jpg}" alt="Sanchit"/>
+                        <!-- <div class="team-avatar-initials">C</div>
+                        <span class="team-placeholder-label">Photo coming soon</span> -->
+                    </div>
+                </div>
+                <div class="team-info">
+                    <div class="team-number">03</div>
+                    <div class="team-name">Sanchit Pahurkar</div>
+                    <div class="team-features">
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Product</span>
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Order Details</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- ── Member 4 ── -->
+            <a th:href="@{/productlines}" class="team-card fade-up delay-4">
+                <div class="team-photo-wrap">
+                    <div class="team-photo-placeholder">
+                        <div class="team-avatar-initials">D</div>
+                        <span class="team-placeholder-label">Photo coming soon</span>
+                    </div>
+                </div>
+                <div class="team-info">
+                    <div class="team-number">04</div>
+                    <div class="team-name">Dhruv Toshniwal</div>
+                    <div class="team-features">
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Product Lines</span>
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Product</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- ── Member 5 ── -->
+            <a th:href="@{/employees}" class="team-card fade-up delay-5">
+                <div class="team-photo-wrap">
+                    <div class="team-photo-placeholder">
+                        <div class="team-avatar-initials">E</div>
+                        <span class="team-placeholder-label">Photo coming soon</span>
+                    </div>
+                </div>
+                <div class="team-info">
+                    <div class="team-number">05</div>
+                    <div class="team-name">Atharva Bomle</div>
+                    <div class="team-features">
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Employee</span>
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Office</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- ── Member 6 ── -->
+            <a th:href="@{/orders}" class="team-card fade-up delay-6">
+                <div class="team-photo-wrap">
+                    <div class="team-photo-placeholder">
+                        <div class="team-avatar-initials">F</div>
+                        <span class="team-placeholder-label">Photo coming soon</span>
+                    </div>
+                </div>
+                <div class="team-info">
+                    <div class="team-number">06</div>
+                    <div class="team-name">Divy Purohit</div>
+                    <div class="team-features">
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Order</span>
+                        <span class="feature-pill"><span class="feature-pill-dot"></span>Order Details</span>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+        <span class="footer-brand">Classic Business Model</span>
+        <span class="footer-note">Built by a Group 4 &mdash; Spring Boot &amp; Thymeleaf</span>
+    </footer>
+
+</body>
+
+</html>
