@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchProducts(line, page) {
     // FIX: Appended &size=1000 so the backend returns all items for client-side pagination.
-    const API_URL = `http://localhost:8080/products/search/searchByNameOrLineTwo?line=${encodeURIComponent(line)}&size=1000`;
+    const API_URL = `http://172.16.160.136:8080/products/search/searchByNameOrLineTwo?line=${encodeURIComponent(line)}&size=1000`;
 
     try {
         const response = await fetch(API_URL);

@@ -1,5 +1,5 @@
-const API_BASE = 'http://localhost:8080/productlines';
-const CUSTOM_API_BASE = 'http://localhost:8080/api/custom';
+const API_BASE = 'http://172.16.160.136:8080/productlines';
+const CUSTOM_API_BASE = 'http://172.16.160.136:8080/api/custom';
 let currentPage = 0;
 const pageSize = 5;
 let myChart = null;
