@@ -1,7 +1,10 @@
 package com.example.ProjectSprintFrontend.config;
 
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -10,7 +13,10 @@ public class AppConfig {
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpComponentsClientHttpRequestFactory factory =
+                new HttpComponentsClientHttpRequestFactory(httpClient);
+        return new RestTemplate(factory);
     }
 
     @Bean
