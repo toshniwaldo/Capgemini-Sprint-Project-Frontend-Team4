@@ -106,29 +106,36 @@ async function searchByImage(file) {
         showToast('Error connecting to image search API.', true);
     }
 }
-
 async function fetchProductLines() {
     const descKeyword = document.getElementById('descSearch').value.trim();
     const nameKeyword = document.getElementById('nameSearch').value.trim();
     const clearBtn = document.getElementById('clearSearch');
 
-    // --- NEW SEARCH VALIDATION ---
-    // If the user is searching by name and enters ONLY numbers, block it and show the error.
+    // Search Validation
     if (nameKeyword && /^\d+$/.test(nameKeyword)) {
         showToast('Product Line name cannot be purely numbers.', true);
         return;
     }
-    // -----------------------------
 
     let url = `${API_BASE}?page=${currentPage}&size=${pageSize}`;
 
-    if (nameKeyword) {
+    // NEW LOGIC: Check if BOTH are filled first for the "AND" operation
+    if (nameKeyword && descKeyword) {
+        url = `${API_BASE}/search/by-name-and-desc?name=${encodeURIComponent(nameKeyword)}&desc=${encodeURIComponent(descKeyword)}&page=${currentPage}&size=${pageSize}`;
+        clearBtn.style.display = 'inline-block';
+    }
+    // If only Name is filled
+    else if (nameKeyword) {
         url = `${API_BASE}/${encodeURIComponent(nameKeyword)}`;
         clearBtn.style.display = 'inline-block';
-    } else if (descKeyword) {
+    }
+    // If only Description is filled
+    else if (descKeyword) {
         url = `${API_BASE}/search/by-description?keyword=${encodeURIComponent(descKeyword)}&page=${currentPage}&size=${pageSize}`;
         clearBtn.style.display = 'inline-block';
-    } else {
+    }
+    // If both are empty
+    else {
         clearBtn.style.display = 'none';
     }
 
@@ -147,10 +154,13 @@ async function fetchProductLines() {
         let items = [];
         let pageInfo = { totalElements: 0, totalPages: 0, number: 0 };
 
-        if (nameKeyword) {
+        // If the response is a single object (exact name search fallback)
+        if (nameKeyword && !descKeyword) {
             items = [data];
             pageInfo = { totalElements: 1, totalPages: 1, number: 0 };
-        } else if (data._embedded) {
+        }
+        // If the response is a list/page (AND search, Desc search, or full list)
+        else if (data._embedded) {
             let allItems = data._embedded.productLines || data._embedded.productlines || [];
 
             if (data.page) {
